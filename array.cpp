@@ -9,13 +9,18 @@ using Scalar = double;
 
 template<size_t Size>
 // using Vector = Scalar[Size];
-// struct Vector{Scalar items[Size];};
 using Vector = std::array<Scalar, Size>;
+// struct Vector {
+//   Scalar items[Size];
+//   auto cbegin() const {return items;} auto cend() const {return items + Size;}
+//   auto begin() const {return cbegin();} auto end() const {return cend();}
+//   auto begin() {return items;} auto end() {return items + Size;}
+// };
 
 template<size_t Size>
 auto operator+(const Vector<Size>& a, const Vector<Size>& b) -> Vector<Size> {
   auto sum = Vector<Size>{};
-  std::transform(a.begin(), a.end(), b.begin(), sum.begin(),
+  std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
     [](Scalar x, Scalar y) {
       return x + y;
     }
@@ -41,9 +46,9 @@ using Matrix = std::array<Vector<NCol>, NRow>;
 template<size_t NRow, size_t NCol>
 auto sum_across_cols(const Matrix<NRow, NCol>& matrix) -> Vector<NRow> {
   auto sum = Vector<NRow>{};
-  std::transform(matrix.begin(), matrix.end(), sum.begin(),
+  std::transform(matrix.cbegin(), matrix.cend(), sum.begin(),
     [](const Vector<NCol>& row) {
-      return std::reduce(row.begin(), row.end());
+      return std::reduce(row.cbegin(), row.cend());
     }
   );
   return sum;
@@ -51,7 +56,7 @@ auto sum_across_cols(const Matrix<NRow, NCol>& matrix) -> Vector<NRow> {
 
 template<size_t NRow, size_t NCol>
 auto sum_across_rows(const Matrix<NRow, NCol>& matrix) -> Vector<NCol> {
-  return std::reduce(matrix.begin(), matrix.end(), Vector<NCol>{},
+  return std::reduce(matrix.cbegin(), matrix.cend(), Vector<NCol>{},
     [](const Vector<NCol>& a, const Vector<NCol>& b) {
       return a + b;
     }

@@ -15,14 +15,11 @@ using Vector = std::array<Scalar, Size>;
 template<size_t Size>
 auto operator+(const Vector<Size>& a, const Vector<Size>& b) -> Vector<Size> {
   auto sum = Vector<Size>{};
-  for (auto i = size_t{}; i < a.size(); i += 1) {
-    sum[i] = a[i] + b[i];
-  }
-  // std::transform(a.begin(), a.end(), b.begin(), sum,
-  //   [](Scalar x, Scalar y) {
-  //     return x + y;
-  //   }
-  // );
+  std::transform(a.begin(), a.end(), b.begin(), sum.begin(),
+    [](Scalar x, Scalar y) {
+      return x + y;
+    }
+  );
   return sum;
 }
 

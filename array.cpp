@@ -39,6 +39,17 @@ template<size_t NRow, size_t NCol>
 using Matrix = std::array<Vector<NCol>, NRow>;
 
 template<size_t NRow, size_t NCol>
+auto sum_across_cols(const Matrix<NRow, NCol>& matrix) -> Vector<NRow> {
+  auto sum = Vector<NRow>{};
+  std::transform(matrix.begin(), matrix.end(), sum.begin(),
+    [](const Vector<NCol>& row) {
+      return std::reduce(row.begin(), row.end());
+    }
+  );
+  return sum;
+}
+
+template<size_t NRow, size_t NCol>
 auto sum_across_rows(const Matrix<NRow, NCol>& matrix) -> Vector<NCol> {
   return std::reduce(matrix.begin(), matrix.end(), Vector<NCol>{},
     [](const Vector<NCol>& a, const Vector<NCol>& b) {
@@ -50,6 +61,6 @@ auto sum_across_rows(const Matrix<NRow, NCol>& matrix) -> Vector<NCol> {
 auto main() -> int {
   // Scalar a[2][3] = {{1, 2, 3}, {4, 5, 6}};
   auto a = Matrix<2, 3>{{{1, 2, 3}, {4, 5, 6}}};
-  auto b = sum_across_rows(a);
-  std::cout << b << std::endl;
+  std::cout << sum_across_cols(a) << std::endl;
+  std::cout << sum_across_rows(a) << std::endl;
 }

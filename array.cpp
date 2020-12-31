@@ -17,6 +17,10 @@ using Vector = std::array<Scalar, Size>;
 //   auto begin() {return items;} auto end() {return items + Size;}
 // };
 
+template<size_t NRow, size_t NCol>
+// using Matrix = Scalar[NRow][NCol];
+using Matrix = std::array<Vector<NCol>, NRow>;
+
 template<size_t Size>
 auto operator+(const Vector<Size>& a, const Vector<Size>& b) -> Vector<Size> {
   auto sum = Vector<Size>{};
@@ -38,10 +42,6 @@ auto operator<<(std::ostream& out, const Vector<Size>& a) -> std::ostream& {
   }
   return out;
 }
-
-template<size_t NRow, size_t NCol>
-// using Matrix = Scalar[NRow][NCol];
-using Matrix = std::array<Vector<NCol>, NRow>;
 
 template<size_t NRow, size_t NCol>
 auto sum_across_cols(const Matrix<NRow, NCol>& matrix) -> Vector<NRow> {

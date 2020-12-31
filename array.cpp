@@ -9,8 +9,8 @@ template<typename Val>
 using Scalar = Val;
 
 template<typename Val, size_t N>
-// using Vec = Val[N];
 using Vec = std::array<Val, N>;
+// using Vec = Val[N];
 // struct Vec {
 //   Val items[N];
 //   auto  begin()       {return items;}   auto  end()       {return items + N;}
@@ -19,19 +19,8 @@ using Vec = std::array<Val, N>;
 // };
 
 template<typename Val, size_t N, size_t M>
-// using Mat = Val[N][M];
 using Mat = Vec<Vec<Val, M>, N>;
-
-template<typename Val, size_t N>
-auto operator+(const Vec<Val, N>& a, const Vec<Val, N>& b) -> Vec<Val, N> {
-  auto sum = Vec<Val, N>{};
-  std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
-    [](Val x, Val y) {
-      return x + y;
-    }
-  );
-  return sum;
-}
+// using Mat = Val[N][M];
 
 template<typename Val, size_t N>
 auto operator<<(std::ostream& out, const Vec<Val, N>& a) -> std::ostream& {
@@ -42,6 +31,17 @@ auto operator<<(std::ostream& out, const Vec<Val, N>& a) -> std::ostream& {
     out << " " << x;
   }
   return out;
+}
+
+template<typename Val, size_t N>
+auto operator+(const Vec<Val, N>& a, const Vec<Val, N>& b) -> Vec<Val, N> {
+  auto sum = Vec<Val, N>{};
+  std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
+    [](Val x, Val y) {
+      return x + y;
+    }
+  );
+  return sum;
 }
 
 template<typename Val, size_t N, size_t M>

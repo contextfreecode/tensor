@@ -15,17 +15,6 @@ template<typename Val>
 using Mat = Vec<Vec<Val>>;
 
 template<typename Val>
-auto operator+(const Vec<Val>& a, const Vec<Val>& b) -> Vec<Val> {
-  auto sum = Vec<Val>(a.size());
-  std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
-    [](Val x, Val y) {
-      return x + y;
-    }
-  );
-  return sum;
-}
-
-template<typename Val>
 auto operator<<(std::ostream& out, const Vec<Val>& a) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
@@ -34,6 +23,17 @@ auto operator<<(std::ostream& out, const Vec<Val>& a) -> std::ostream& {
     out << " " << x;
   }
   return out;
+}
+
+template<typename Val>
+auto operator+(const Vec<Val>& a, const Vec<Val>& b) -> Vec<Val> {
+  auto sum = Vec<Val>(a.size());
+  std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
+    [](Val x, Val y) {
+      return x + y;
+    }
+  );
+  return sum;
 }
 
 template<typename Val>

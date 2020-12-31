@@ -66,6 +66,7 @@ auto sum_across_rows(const Matrix<NRow, NCol>& matrix) -> Vector<NCol> {
 auto main() -> int {
   // Scalar a[2][3] = {{1, 2, 3}, {4, 5, 6}};
   auto a = Matrix<2, 3>{{{1, 2, 3}, {4, 5, 6}}};
+  std::cout << sizeof(a) << std::endl;
   std::cout << sum_across_cols(a) << std::endl;
   std::cout << sum_across_rows(a) << std::endl;
 }

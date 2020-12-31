@@ -11,10 +11,10 @@ template<typename Scal, size_t N>
 // using Vec = Scalar[N];
 using Vec = std::array<Scal, N>;
 // struct Vec {
-//   Scalar items[N];
-//   auto cbegin() const {return items;} auto cend() const {return items + N;}
-//   auto begin() const {return cbegin();} auto end() const {return cend();}
-//   auto begin() {return items;} auto end() {return items + N;}
+//   Scal items[N];
+//   auto  begin()       {return items;}   auto  end()       {return items + N;}
+//   auto  begin() const {return items;}   auto  end() const {return items + N;}
+//   auto cbegin() const {return begin();} auto cend() const {return end();}
 // };
 
 template<typename Scal, size_t N, size_t M>
@@ -64,6 +64,7 @@ auto sum_across_rows(const Mat<Scal, N, M>& matrix) -> Vec<Scal, M> {
 }
 
 auto main() -> int {
+  // See also: nm -an array | c++filt | grep across
   // double a[2][3] = {{1, 2, 3}, {4, 5, 6}};
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;

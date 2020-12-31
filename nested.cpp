@@ -58,8 +58,7 @@ auto sum_across_rows(const Mat<Scal>& matrix) -> Vec<Scal> {
 }
 
 auto main() -> int {
-  // double* a[2] = {(double[]){1, 2, 3}, (double[]){4, 5, 6}};
-  // Scal a[2][3] = {{1, 2, 3}, {4, 5, 6}};
+  // double* a[] = {(double[]){1, 2, 3}, (double[]){4, 5, 6}};
   auto a = Mat<double>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;
   std::cout << sum_across_cols(a) << std::endl;

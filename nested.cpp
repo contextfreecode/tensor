@@ -5,29 +5,27 @@
 #include <ranges>
 #include <vector>
 
-using Scalar = double;
+// using Scal = double;
 
-template<typename Scalar>
-using Vector = std::vector<Scalar>;
+template<typename Scal>
+using Vec = std::vector<Scal>;
 
-template<typename Scalar>
-using Matrix = std::vector<Vector<Scalar>>;
+template<typename Scal>
+using Mat = std::vector<Vec<Scal>>;
 
-template<typename Scalar>
-auto operator+(const Vector<Scalar>& a, const Vector<Scalar>& b)
-  -> Vector<Scalar>
-{
-  auto sum = Vector<Scalar>(a.size());
+template<typename Scal>
+auto operator+(const Vec<Scal>& a, const Vec<Scal>& b) -> Vec<Scal> {
+  auto sum = Vec<Scal>(a.size());
   std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
-    [](Scalar x, Scalar y) {
+    [](Scal x, Scal y) {
       return x + y;
     }
   );
   return sum;
 }
 
-template<typename Scalar>
-auto operator<<(std::ostream& out, const Vector<Scalar>& a) -> std::ostream& {
+template<typename Scal>
+auto operator<<(std::ostream& out, const Vec<Scal>& a) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
@@ -37,22 +35,23 @@ auto operator<<(std::ostream& out, const Vector<Scalar>& a) -> std::ostream& {
   return out;
 }
 
-template<typename Scalar>
-auto sum_across_cols(const Matrix<Scalar>& matrix) -> Vector<Scalar> {
-  auto sum = Vector<Scalar>(matrix.size());
+template<typename Scal>
+auto sum_across_cols(const Mat<Scal>& matrix) -> Vec<Scal> {
+  auto sum = Vec<Scal>(matrix.size());
   std::transform(matrix.cbegin(), matrix.cend(), sum.begin(),
-    [](const Vector<Scalar>& row) {
+    [](const Vec<Scal>& row) {
       return std::reduce(row.cbegin(), row.cend());
     }
   );
   return sum;
 }
 
-template<typename Scalar>
-auto sum_across_rows(const Matrix<Scalar>& matrix) -> Vector<Scalar> {
-  auto ncol = matrix.empty() ? 0 : matrix[0].size();
-  return std::reduce(matrix.cbegin(), matrix.cend(), Vector<Scalar>(ncol),
-    [](const Vector<Scalar>& a, const Vector<Scalar>& b) {
+template<typename Scal>
+auto sum_across_rows(const Mat<Scal>& matrix) -> Vec<Scal> {
+  // No control of shape if empty!
+  auto m = matrix.empty() ? 0 : matrix[0].size();
+  return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Scal>(m),
+    [](const Vec<Scal>& a, const Vec<Scal>& b) {
       return a + b;
     }
   );
@@ -60,8 +59,8 @@ auto sum_across_rows(const Matrix<Scalar>& matrix) -> Vector<Scalar> {
 
 auto main() -> int {
   // double* a[2] = {(double[]){1, 2, 3}, (double[]){4, 5, 6}};
-  // Scalar a[2][3] = {{1, 2, 3}, {4, 5, 6}};
-  auto a = Matrix<double>{{1, 2, 3}, {4, 5, 6}};
+  // Scal a[2][3] = {{1, 2, 3}, {4, 5, 6}};
+  auto a = Mat<double>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;
   std::cout << sum_across_cols(a) << std::endl;
   std::cout << sum_across_rows(a) << std::endl;

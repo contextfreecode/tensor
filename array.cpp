@@ -19,7 +19,7 @@ using Vec = std::array<Scal, N>;
 
 template<typename Scal, size_t N, size_t M>
 // using Mat = Scalar[N][M];
-using Mat = std::array<Vec<Scal, M>, N>;
+using Mat = Vec<Vec<Scal, M>, N>;
 
 template<typename Scal, size_t N>
 auto operator+(const Vec<Scal, N>& a, const Vec<Scal, N>& b) -> Vec<Scal, N> {

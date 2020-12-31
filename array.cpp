@@ -5,35 +5,36 @@
 #include <numeric>
 #include <ranges>
 
-// using Scal = double;
+template<typename Val>
+using Scalar = Val;
 
-template<typename Scal, size_t N>
-// using Vec = Scalar[N];
-using Vec = std::array<Scal, N>;
+template<typename Val, size_t N>
+// using Vec = Val[N];
+using Vec = std::array<Val, N>;
 // struct Vec {
-//   Scal items[N];
+//   Val items[N];
 //   auto  begin()       {return items;}   auto  end()       {return items + N;}
 //   auto  begin() const {return items;}   auto  end() const {return items + N;}
 //   auto cbegin() const {return begin();} auto cend() const {return end();}
 // };
 
-template<typename Scal, size_t N, size_t M>
-// using Mat = Scalar[N][M];
-using Mat = Vec<Vec<Scal, M>, N>;
+template<typename Val, size_t N, size_t M>
+// using Mat = Val[N][M];
+using Mat = Vec<Vec<Val, M>, N>;
 
-template<typename Scal, size_t N>
-auto operator+(const Vec<Scal, N>& a, const Vec<Scal, N>& b) -> Vec<Scal, N> {
-  auto sum = Vec<Scal, N>{};
+template<typename Val, size_t N>
+auto operator+(const Vec<Val, N>& a, const Vec<Val, N>& b) -> Vec<Val, N> {
+  auto sum = Vec<Val, N>{};
   std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
-    [](Scal x, Scal y) {
+    [](Val x, Val y) {
       return x + y;
     }
   );
   return sum;
 }
 
-template<typename Scal, size_t N>
-auto operator<<(std::ostream& out, const Vec<Scal, N>& a) -> std::ostream& {
+template<typename Val, size_t N>
+auto operator<<(std::ostream& out, const Vec<Val, N>& a) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
@@ -43,21 +44,21 @@ auto operator<<(std::ostream& out, const Vec<Scal, N>& a) -> std::ostream& {
   return out;
 }
 
-template<typename Scal, size_t N, size_t M>
-auto sum_across_cols(const Mat<Scal, N, M>& matrix) -> Vec<Scal, N> {
-  auto sum = Vec<Scal, N>{};
+template<typename Val, size_t N, size_t M>
+auto sum_across_cols(const Mat<Val, N, M>& matrix) -> Vec<Val, N> {
+  auto sum = Vec<Val, N>{};
   std::transform(matrix.cbegin(), matrix.cend(), sum.begin(),
-    [](const Vec<Scal, M>& row) {
+    [](const Vec<Val, M>& row) {
       return std::reduce(row.cbegin(), row.cend());
     }
   );
   return sum;
 }
 
-template<typename Scal, size_t N, size_t M>
-auto sum_across_rows(const Mat<Scal, N, M>& matrix) -> Vec<Scal, M> {
-  return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Scal, M>{},
-    [](const Vec<Scal, M>& a, const Vec<Scal, M>& b) {
+template<typename Val, size_t N, size_t M>
+auto sum_across_rows(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
+  return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Val, M>{},
+    [](const Vec<Val, M>& a, const Vec<Val, M>& b) {
       return a + b;
     }
   );
@@ -67,6 +68,7 @@ auto main() -> int {
   // Remember valgrind and overhead. (1 alloc even without the next line.)
   // std::cout << "Hi!" << std::endl;
   // See also: nm -an array | c++filt | grep across
+  // auto x = Scalar<double>{1};
   // double a[2][3] = {{1, 2, 3}, {4, 5, 6}};
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;

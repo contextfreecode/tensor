@@ -5,27 +5,28 @@
 #include <ranges>
 #include <vector>
 
-// using Scal = double;
+template<typename Val>
+using Scalar = Val;
 
-template<typename Scal>
-using Vec = std::vector<Scal>;
+template<typename Val>
+using Vec = std::vector<Val>;
 
-template<typename Scal>
-using Mat = std::vector<Vec<Scal>>;
+template<typename Val>
+using Mat = Vec<Vec<Val>>;
 
-template<typename Scal>
-auto operator+(const Vec<Scal>& a, const Vec<Scal>& b) -> Vec<Scal> {
-  auto sum = Vec<Scal>(a.size());
+template<typename Val>
+auto operator+(const Vec<Val>& a, const Vec<Val>& b) -> Vec<Val> {
+  auto sum = Vec<Val>(a.size());
   std::transform(a.cbegin(), a.cend(), b.cbegin(), sum.begin(),
-    [](Scal x, Scal y) {
+    [](Val x, Val y) {
       return x + y;
     }
   );
   return sum;
 }
 
-template<typename Scal>
-auto operator<<(std::ostream& out, const Vec<Scal>& a) -> std::ostream& {
+template<typename Val>
+auto operator<<(std::ostream& out, const Vec<Val>& a) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
@@ -35,23 +36,23 @@ auto operator<<(std::ostream& out, const Vec<Scal>& a) -> std::ostream& {
   return out;
 }
 
-template<typename Scal>
-auto sum_across_cols(const Mat<Scal>& matrix) -> Vec<Scal> {
-  auto sum = Vec<Scal>(matrix.size());
+template<typename Val>
+auto sum_across_cols(const Mat<Val>& matrix) -> Vec<Val> {
+  auto sum = Vec<Val>(matrix.size());
   std::transform(matrix.cbegin(), matrix.cend(), sum.begin(),
-    [](const Vec<Scal>& row) {
+    [](const Vec<Val>& row) {
       return std::reduce(row.cbegin(), row.cend());
     }
   );
   return sum;
 }
 
-template<typename Scal>
-auto sum_across_rows(const Mat<Scal>& matrix) -> Vec<Scal> {
+template<typename Val>
+auto sum_across_rows(const Mat<Val>& matrix) -> Vec<Val> {
   // No control of shape if empty!
   auto m = matrix.empty() ? 0 : matrix[0].size();
-  return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Scal>(m),
-    [](const Vec<Scal>& a, const Vec<Scal>& b) {
+  return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Val>(m),
+    [](const Vec<Val>& a, const Vec<Val>& b) {
       return a + b;
     }
   );

@@ -64,6 +64,8 @@ auto sum_across_rows(const Mat<Scal, N, M>& matrix) -> Vec<Scal, M> {
 }
 
 auto main() -> int {
+  // Remember valgrind and overhead. (1 alloc even without the next line.)
+  // std::cout << "Hi!" << std::endl;
   // See also: nm -an array | c++filt | grep across
   // double a[2][3] = {{1, 2, 3}, {4, 5, 6}};
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};

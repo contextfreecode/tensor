@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <memory>
+#include <numeric>
 #include <vector>
 
 // Dense only, not sparse.
@@ -16,13 +17,15 @@ struct Tensor {
   }
 
 private:
-  size_t offset;
+  size_t offset = 0;
   std::vector<size_t> sizes;
   std::vector<size_t> strides;
   std::shared_ptr<std::vector<Val>> vals;
 
   auto index(std::initializer_list<size_t> coord) -> size_t {
-    return 0;
+    return std::transform_reduce(
+      coord.begin(), coord.end(), strides.begin(), offset
+    );
   }
 };
 

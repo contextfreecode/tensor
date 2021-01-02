@@ -1,25 +1,27 @@
 #include <stdio.h>
 
+typedef double Scalar;
+
 int main(void) {
-  double a[][3] = {{1, 2, 3}, {4, 5, 6}};
-  double* b[] = {(double[]){1, 2, 3}, (double[]){4, 5, 6}};
-  printf("sizeof _ / sizeof(double)\n");
-  printf("%zu\n", sizeof a / sizeof(double));
-  printf("%zu\n", sizeof b / sizeof(double));
-  printf("(double*)_[0] - (double*)_\n");
-  printf("%zu\n", (double*)a[0] - (double*)a);
-  printf("%zu\n", (double*)b[0] - (double*)b);
-  printf("(double*)_[1] - (double*)_\n");
-  printf("%zu\n", (double*)a[1] - (double*)a);
-  printf("%zu\n", (double*)b[1] - (double*)b);
+  Scalar a[][3] = {{1, 2, 3}, {4, 5, 6}};
+  Scalar* b[] = {(Scalar[]){1, 2, 3}, (Scalar[]){4, 5, 6}};
+  printf("sizeof _ / sizeof(Scalar)\n");
+  printf("%td\n", sizeof a / sizeof(Scalar));
+  printf("%td\n", sizeof b / sizeof(Scalar));
+  printf("(Scalar*)_[0] - (Scalar*)_\n");
+  printf("%td\n", (Scalar*)a[0] - (Scalar*)a);
+  printf("%td\n", (Scalar*)b[0] - (Scalar*)b);
+  printf("(Scalar*)_[1] - (Scalar*)_\n");
+  printf("%td\n", (Scalar*)a[1] - (Scalar*)a);
+  printf("%td\n", (Scalar*)b[1] - (Scalar*)b);
   printf("_[1] - _[0]\n");
-  printf("%zu\n", a[1] - a[0]);
-  printf("%zu\n", b[1] - b[0]);
+  printf("%td\n", a[1] - a[0]);
+  printf("%td\n", b[1] - b[0]);
   printf("&_[0][1] - &_[0][0]\n");
-  printf("%zu\n", &a[0][1] - &a[0][0]);
-  printf("%zu\n", &b[0][1] - &b[0][0]);
+  printf("%td\n", &a[0][1] - &a[0][0]);
+  printf("%td\n", &b[0][1] - &b[0][0]);
   printf("Contents\n");
-  for (size_t i = 0; i < sizeof a / sizeof(double); i += 1) {
-    printf("%lf %lf\n", ((double*)a)[i], ((double*)b)[i]);
+  for (size_t i = 0; i < sizeof a / sizeof(Scalar); i += 1) {
+    printf("%f %f\n", ((Scalar*)a)[i], ((Scalar*)b)[i]);
   }
 }

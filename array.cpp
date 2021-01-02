@@ -4,6 +4,7 @@
 #include <iostream>
 #include <numeric>
 #include <ranges>
+#include <type_traits>
 
 template<typename Val>
 using Scalar = Val;
@@ -69,7 +70,10 @@ auto main() -> int {
   // std::cout << "Hi!" << std::endl;
   // See also: nm -an array | c++filt | grep across
   // auto x = Scalar<double>{1};
-  // double a[2][3] = {{1, 2, 3}, {4, 5, 6}};
+  // double a[][3] = {{1, 2, 3}, {4, 5, 6}};
+  // std::cout << std::rank<decltype(a)>::value << std::endl;
+  // std::cout << std::extent<decltype(a)>::value << std::endl;
+  // std::cout << std::extent<decltype(a), 1>::value << std::endl;
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;
   std::cout << sum_across_cols(a) << std::endl;

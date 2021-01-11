@@ -15,6 +15,10 @@ struct Tensor {
     //
   }
 
+  Tensor(std::initializer_list<std::initializer_list<Val>> v) {
+    //
+  }
+
   static auto zeros(const std::vector<size_t>& shape) -> Tensor<Val> {
     auto result = Tensor<Val>();
     result.sizes = shape;
@@ -55,4 +59,5 @@ auto main() -> int {
   auto a = Tensor<double>::zeros({2, 3});
   std::cout << a[{0, 0}] << std::endl;
   std::cout << a[{1, 2}] << std::endl;
+  auto b = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
 }

@@ -24,4 +24,10 @@ int main(void) {
   for (size_t i = 0; i < sizeof a / sizeof(Val); i += 1) {
     printf("%f %f\n", ((Val*)a)[i], ((Val*)b)[i]);
   }
+  for (size_t i = 0; i < sizeof a / sizeof(Val); i += 1) {
+    printf("%p %p\n", &((Val*)a)[i], &((Val*)b)[i]);
+  }
+  for (size_t i = 0; i < sizeof a / sizeof(Val); i += 1) {
+    printf("%p %p\n", ((Val**)a)[i], b[i]);
+  }
 }

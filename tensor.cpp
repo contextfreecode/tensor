@@ -20,7 +20,7 @@ struct Tensor {
   }
 
   static auto zeros(const std::vector<size_t>& shape) -> Tensor<Val> {
-    auto result = Tensor<Val>();
+    auto result = Tensor<Val>{};
     result.sizes = shape;
     result.strides.resize(shape.size());
     // Calculate strides in row majorish order back to front.

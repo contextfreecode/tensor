@@ -75,7 +75,8 @@ auto main() -> int {
   std::cout << a[{0, 0}] << std::endl;
   std::cout << a[{1, 0}] << std::endl;
   std::cout << a[{1, 2}] << std::endl;
-  auto b = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
+  // auto b = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
+  auto b = Tensor{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
   std::cout << b[{0, 0}] << std::endl;
   std::cout << b[{1, 0}] << std::endl;
   std::cout << b[{1, 2}] << std::endl;

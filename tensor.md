@@ -23,7 +23,7 @@ let main (n: i32): i32 = fact n
 
 ```futhark
 let sum_across_rows [n][m] (array: [n][m]f64): [m]f64 =
-  let sum = reduce (\sum row -> map2 (+) sum row) (replicate m 0) array
+  let sum = reduce (map2 (+)) (replicate m 0) array
   in map (/ (f64.i64 n)) sum
 ```
 

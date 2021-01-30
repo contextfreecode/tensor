@@ -1,34 +1,29 @@
 
 ```futhark
-let a: []f64 = [1, 2, 3]
 let scores: [][]f64 = [
   [95, 83, 76],
   [99, 89, 82]
 ]
 
-let fact (n: i32): i32 = reduce (*) 1 (1...n)
+let mean_col [n][m] (array: [n][m]f64): [n]f64 =
+  let sum = map (reduce (+) 0) array
+  in map (/ (f64.i64 m)) sum
+
+let mean_row [n][m] (array: [n][m]f64): [m]f64 =
+  mean_col (transpose array)
 ```
 
 ```
-> fact 4i32
+> mean_col (scores)
 ```
 
 ```
-24i32
+[84.66666666666667f64, 90.0f64]
 ```
 
 
-let main (n: i32) = copy a
-let main (n: i32): i32 = fact n
-
-```futhark
-let sum_across_rows [n][m] (array: [n][m]f64): [m]f64 =
-  let sum = reduce (map2 (+)) (replicate m 0) array
-  in map (/ (f64.i64 n)) sum
 ```
-
-```
-> sum_across_rows (scores)
+> mean_row (scores)
 ```
 
 ```

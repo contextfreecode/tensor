@@ -59,7 +59,7 @@ auto sum_col(const Mat<Val, N, M>& matrix) -> Vec<Val, N> {
 template<typename Val, size_t N, size_t M>
 auto sum_row(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
   return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Val, M>{},
-    [](const Vec<Val, M>& a, const Vec<Val, M>& b) {
+    [](const auto& a, const auto& b) {
       return a + b;
     }
   );

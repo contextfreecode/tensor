@@ -46,7 +46,7 @@ auto operator+(const Vec<Val, N>& a, const Vec<Val, N>& b) -> Vec<Val, N> {
 }
 
 template<typename Val, size_t N, size_t M>
-auto sum_across_cols(const Mat<Val, N, M>& matrix) -> Vec<Val, N> {
+auto sum_col(const Mat<Val, N, M>& matrix) -> Vec<Val, N> {
   auto sum = Vec<Val, N>{};
   std::transform(matrix.cbegin(), matrix.cend(), sum.begin(),
     [](const Vec<Val, M>& row) {
@@ -57,13 +57,16 @@ auto sum_across_cols(const Mat<Val, N, M>& matrix) -> Vec<Val, N> {
 }
 
 template<typename Val, size_t N, size_t M>
-auto sum_across_rows(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
+auto sum_row(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
   return std::reduce(matrix.cbegin(), matrix.cend(), Vec<Val, M>{},
     [](const Vec<Val, M>& a, const Vec<Val, M>& b) {
       return a + b;
     }
   );
 }
+
+// template<typename Val, size_t N, size_t M>
+// auto sum(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
 
 auto main() -> int {
   // Remember valgrind and overhead. (1 alloc even without the next line.)
@@ -76,6 +79,6 @@ auto main() -> int {
   // std::cout << std::extent<decltype(a), 1>::value << std::endl;
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;
-  std::cout << sum_across_cols(a) << std::endl;
-  std::cout << sum_across_rows(a) << std::endl;
+  std::cout << sum_col(a) << std::endl;
+  std::cout << sum_row(a) << std::endl;
 }

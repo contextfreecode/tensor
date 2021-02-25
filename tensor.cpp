@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <concepts>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -21,6 +22,7 @@ struct Tensor {
   Tensor(std::initializer_list<std::initializer_list<Val>> v) {
     sizes = {v.size(), v.size() ? v.begin()->size() : 0};
     init();
+    // TODO Go simple for loop begin to end here???
     std::for_each(
       v.begin(), v.end(), [&](const std::initializer_list<Val>& row) {
         // TODO Verify lengths.
@@ -39,9 +41,13 @@ struct Tensor {
 
   auto rank() {return sizes.size();};
 
-  auto operator[](std::initializer_list<size_t> coord) {
+  auto operator[](std::initializer_list<size_t> coord) -> Val {
     std::cout << "index: " << index(coord) << std::endl;
     return vals->at(index(coord));
+  }
+
+  auto operator()(std::unsigned_integral auto... coord) -> Val {
+    return (*this)[{coord...}];
   }
 
 private:
@@ -80,4 +86,5 @@ auto main() -> int {
   std::cout << b[{0, 0}] << std::endl;
   std::cout << b[{1, 0}] << std::endl;
   std::cout << b[{1, 2}] << std::endl;
+  std::cout << b(1u, 2u) << std::endl;
 }

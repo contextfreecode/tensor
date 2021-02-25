@@ -15,23 +15,19 @@ struct Tensor {
     //
   }
 
-  Tensor(std::initializer_list<Val> v) {
-    sizes = {v.size()};
+  Tensor(std::initializer_list<Val> row) {
+    sizes = {row.size()};
     init();
-    *vals = v;
+    *vals = row;
   }
 
-  Tensor(std::initializer_list<std::initializer_list<Val>> v) {
-    sizes = {Index(v.size()), v.size() ? Index(v.begin()->size()) : 0};
+  Tensor(std::initializer_list<std::initializer_list<Val>> rows) {
+    sizes = {Index(rows.size()), rows.size() ? Index(rows.begin()->size()) : 0};
     init();
-    // TODO Go simple for loop begin to end here???
-    std::for_each(
-      v.begin(), v.end(), [&](const std::initializer_list<Val>& row) {
-        // TODO Verify lengths.
-        auto begin = vals->begin() + sizes[1] * (&row - v.begin());
-        std::copy(row.begin(), row.end(), begin);
-      }
-    );
+    for (auto& row: rows) {
+      auto begin = vals->begin() + sizes[1] * (&row - rows.begin());
+      std::copy(row.begin(), row.end(), begin);
+    }
   }
 
   static auto zeros(const std::vector<Index>& shape) -> Tensor<Val> {
@@ -68,8 +64,8 @@ private:
     strides.resize(sizes.size());
     // Calculate strides in row majorish order back to front.
     // Imperative seems easier here at the moment and good enough.
-    Index stride = 1;
-    for (Index i = sizes.size(); i; i -= 1) {
+    auto stride = 1;
+    for (auto i = sizes.size(); i; i -= 1) {
       strides[i - 1] = stride;
       stride *= sizes[i - 1];
     }

@@ -37,14 +37,14 @@ struct Tensor {
     return result;
   }
 
-  auto rank() {return sizes.size();};
+  auto rank() const {return sizes.size();};
 
-  auto operator[](std::initializer_list<Index> coord) -> Val {
+  auto operator[](std::initializer_list<Index> coord) const -> Val {
     std::cout << "index: " << index(coord) << std::endl;
     return vals->at(index(coord));
   }
 
-  auto operator()(std::convertible_to<Index> auto... coord) -> Val {
+  auto operator()(std::convertible_to<Index> auto... coord) const -> Val {
     return (*this)[{Index(coord)...}];
   }
 
@@ -54,7 +54,7 @@ private:
   std::vector<Index> strides;
   std::shared_ptr<std::vector<Val>> vals;
 
-  auto index(std::initializer_list<Index> coord) -> Index {
+  auto index(std::initializer_list<Index> coord) const -> Index {
     return std::transform_reduce(
       coord.begin(), coord.end(), strides.cbegin(), offset
     );

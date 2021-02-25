@@ -6,6 +6,8 @@
 #include <numeric>
 #include <vector>
 
+using Index = std::ptrdiff_t;
+
 // Dense only, not sparse.
 template<typename Val>
 struct Tensor {
@@ -20,7 +22,7 @@ struct Tensor {
   }
 
   Tensor(std::initializer_list<std::initializer_list<Val>> v) {
-    sizes = {v.size(), v.size() ? v.begin()->size() : 0};
+    sizes = {Index(v.size()), v.size() ? Index(v.begin()->size()) : 0};
     init();
     // TODO Go simple for loop begin to end here???
     std::for_each(
@@ -32,7 +34,7 @@ struct Tensor {
     );
   }
 
-  static auto zeros(const std::vector<size_t>& shape) -> Tensor<Val> {
+  static auto zeros(const std::vector<Index>& shape) -> Tensor<Val> {
     auto result = Tensor<Val>{};
     result.sizes = shape;
     result.init();
@@ -41,22 +43,22 @@ struct Tensor {
 
   auto rank() {return sizes.size();};
 
-  auto operator[](std::initializer_list<size_t> coord) -> Val {
+  auto operator[](std::initializer_list<Index> coord) -> Val {
     std::cout << "index: " << index(coord) << std::endl;
     return vals->at(index(coord));
   }
 
-  auto operator()(std::unsigned_integral auto... coord) -> Val {
+  auto operator()(std::signed_integral auto... coord) -> Val {
     return (*this)[{coord...}];
   }
 
 private:
-  size_t offset = 0;
-  std::vector<size_t> sizes;
-  std::vector<size_t> strides;
+  Index offset = 0;
+  std::vector<Index> sizes;
+  std::vector<Index> strides;
   std::shared_ptr<std::vector<Val>> vals;
 
-  auto index(std::initializer_list<size_t> coord) -> size_t {
+  auto index(std::initializer_list<Index> coord) -> Index {
     return std::transform_reduce(
       coord.begin(), coord.end(), strides.cbegin(), offset
     );
@@ -66,8 +68,8 @@ private:
     strides.resize(sizes.size());
     // Calculate strides in row majorish order back to front.
     // Imperative seems easier here at the moment and good enough.
-    size_t stride = 1;
-    for (size_t i = sizes.size(); i; i -= 1) {
+    Index stride = 1;
+    for (Index i = sizes.size(); i; i -= 1) {
       strides[i - 1] = stride;
       stride *= sizes[i - 1];
     }
@@ -86,5 +88,5 @@ auto main() -> int {
   std::cout << b[{0, 0}] << std::endl;
   std::cout << b[{1, 0}] << std::endl;
   std::cout << b[{1, 2}] << std::endl;
-  std::cout << b(1u, 2u) << std::endl;
+  std::cout << b(1, 2) << std::endl;
 }

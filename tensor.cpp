@@ -44,8 +44,8 @@ struct Tensor {
     return vals->at(index(coord));
   }
 
-  auto operator()(std::signed_integral auto... coord) -> Val {
-    return (*this)[{coord...}];
+  auto operator()(std::convertible_to<Index> auto... coord) -> Val {
+    return (*this)[{Index(coord)...}];
   }
 
 private:
@@ -84,5 +84,5 @@ auto main() -> int {
   std::cout << b[{0, 0}] << std::endl;
   std::cout << b[{1, 0}] << std::endl;
   std::cout << b[{1, 2}] << std::endl;
-  std::cout << b(1, 2) << std::endl;
+  std::cout << b(1, 2.0) << std::endl;
 }

@@ -74,6 +74,11 @@ private:
   }
 };
 
+template<typename Val>
+auto mean(const Tensor<Val>& a, Index axis) -> Tensor<Val> {
+  return {};
+}
+
 auto main() -> int {
   auto a = Tensor<double>::zeros({2, 3});
   std::cout << a[{0, 0}] << std::endl;
@@ -85,4 +90,5 @@ auto main() -> int {
   std::cout << b[{1, 0}] << std::endl;
   std::cout << b[{1, 2}] << std::endl;
   std::cout << b(1, 2) << std::endl;
+  auto m = mean(b, 0);
 }

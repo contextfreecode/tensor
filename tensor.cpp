@@ -41,7 +41,7 @@ struct Tensor {
   }
 
   Tensor(std::initializer_list<Val> row) {
-    sizes_ = {row.size()};
+    sizes_ = {Index(row.size())};
     init();
     *vals_ = row;
   }
@@ -64,19 +64,21 @@ struct Tensor {
     return result;
   }
 
-  auto at_by_dim(Index index, Index dim) -> Tensor<Val> {
+  auto at_by_dim(Index index, Index dim = 0) -> Tensor<Val> {
     auto result = Tensor<Val>{};
-    result.offset_ = offset_ + index * strides_[dim];
+    result.offset_ = offset_ + index * strides_.at(dim);
     result.sizes_ = copy_except(sizes_, dim);
     result.strides_ = copy_except(strides_, dim);
     result.vals_ = vals_;
     return result;
   }
 
+  auto ndim() const -> Index {return sizes_.size();}
+
   auto offset() const -> Index {return offset_;}
 
   auto operator[](std::initializer_list<Index> coord) const -> Val {
-    std::cout << "index: " << index(coord) << std::endl;
+    // std::cout << "index: " << index(coord) << std::endl;
     return vals_->at(index(coord));
   }
 
@@ -84,11 +86,9 @@ struct Tensor {
     return (*this)[{Index(coord)...}];
   }
 
-  auto rank() const {return sizes_.size();}
+  auto sizes() const -> const std::vector<Index>& {return sizes_;}
 
-  auto sizes() const -> const std::vector<Index> {return sizes_;}
-
-  auto strides() const -> const std::vector<Index> {return strides_;}
+  auto strides() const -> const std::vector<Index>& {return strides_;}
 
   auto vals() const -> const std::vector<Val>& {return *vals_;}
 

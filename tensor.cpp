@@ -20,13 +20,13 @@ auto copy_except(
 }
 
 auto write_items(
-  std::ostream& out, const std::ranges::range auto& a, auto sep
+  std::ostream& out, const std::ranges::range auto& items, auto sep
 ) -> std::ostream& {
-  for (const auto& x: a | std::ranges::views::take(1)) {
-    out << x;
+  for (const auto& item: items | std::ranges::views::take(1)) {
+    out << item;
   }
-  for (const auto& x: a | std::ranges::views::drop(1)) {
-    out << sep << x;
+  for (const auto& item: items | std::ranges::views::drop(1)) {
+    out << sep << item;
   }
   return out;
 }
@@ -64,13 +64,58 @@ struct Tensor {
     return result;
   }
 
-  auto at_by_dim(Index index, Index dim = 0) -> Tensor<Val> {
+  struct Iterator {
+    using difference_type = Index;
+
+    const Tensor* tensor = nullptr;
+    Index index = 0;
+
+    auto operator++() -> Iterator& {
+      index += 1;
+      return *this;
+    }
+
+    auto operator++(int) -> Iterator {
+      auto result = {tensor, index};
+      index += 1;
+      return result;
+    }
+
+    auto operator*() -> Tensor {
+      return tensor->at_by_dim(index);
+    }
+
+    // auto operator!=(Iterator other) -> bool {
+    //   return !(*this == other);
+    // }
+
+    // auto operator==(Iterator other) -> bool {
+    //   return tensor == other.tensor && index == other.index;
+    // }
+
+    friend auto operator<=>(const Iterator&, const Iterator&) = default;
+
+    auto operator-(const Iterator& other) -> Index {
+      // TODO Fail if tensors differ.
+      return index - other.index;
+    }
+  };
+
+  auto at_by_dim(Index index, Index dim = 0) const -> const Tensor<Val> {
     auto result = Tensor<Val>{};
     result.offset_ = offset_ + index * strides_.at(dim);
     result.sizes_ = copy_except(sizes_, dim);
     result.strides_ = copy_except(strides_, dim);
     result.vals_ = vals_;
     return result;
+  }
+
+  auto begin() const -> const Iterator {
+    return {this, 0};
+  }
+
+  auto end() const -> const Iterator {
+    return {this, ndim()};
   }
 
   auto ndim() const -> Index {return sizes_.size();}
@@ -123,6 +168,29 @@ auto operator<<(std::ostream& out, const std::vector<Val>& a) -> std::ostream& {
   return write_items(out, a, ' ');
 }
 
+template<typename Val>
+auto operator<<(std::ostream& out, const Tensor<Val>& a) -> std::ostream& {
+  switch (a.ndim()) {
+    case 0: {
+      out << a(0);
+      break;
+    }
+    case 1: {
+      write_items(out, a, ' ');
+      break;
+    }
+    case 2: {
+      write_items(out, a, '\n');
+      break;
+    }
+    default: {
+      out << "big ol' tensor";
+      break;
+    }
+  }
+  return out;
+}
+
 // template<typename Val>
 // auto mean(const Tensor<Val>& a, Index axis) -> Tensor<Val> {
 //   return {};
@@ -142,8 +210,14 @@ auto main() -> int {
   // auto m = mean(b, 0);
   std::cout << b.sizes() << std::endl;
   std::cout << b.strides() << std::endl;
-  auto row0 = b.at_by_dim(1, 0);
-  std::cout << row0.offset() << std::endl;
-  std::cout << row0.sizes() << std::endl;
-  std::cout << row0.strides() << std::endl;
+  auto row = b.at_by_dim(1, 0);
+  std::cout << row.offset() << std::endl;
+  std::cout << row.sizes() << std::endl;
+  std::cout << row.strides() << std::endl;
+  std::cout << row << std::endl;
+  // std::cout << std::is_constructible<decltype(row.begin())>::value << std::endl;
+  // std::input_or_output_iterator auto r = row.begin();
+  // std::ranges::end(row);
+  // std::ranges::range auto& r = row;
+  // std::cout << (row.begin() != row.end()) << std::endl;
 }

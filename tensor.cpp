@@ -5,7 +5,31 @@
 #include <memory>
 #include <numeric>
 #include <ranges>
+#include <type_traits>
 #include <vector>
+
+auto copy_except(
+  const std::ranges::random_access_range auto& items,
+  std::integral auto index
+) {
+  auto result = typename std::remove_reference<decltype(items)>::type();
+  result.reserve(items.size() - 1);
+  std::copy(items.begin(), items.begin() + index, std::back_inserter(result));
+  std::copy(items.begin() + index + 1, items.end(), std::back_inserter(result));
+  return result;
+}
+
+auto write_items(
+  std::ostream& out, const std::ranges::range auto& a, auto sep
+) -> std::ostream& {
+  for (const auto& x: a | std::ranges::views::take(1)) {
+    out << x;
+  }
+  for (const auto& x: a | std::ranges::views::drop(1)) {
+    out << sep << x;
+  }
+  return out;
+}
 
 using Index = std::ptrdiff_t;
 
@@ -43,14 +67,8 @@ struct Tensor {
   auto at_by_dim(Index index, Index dim) -> Tensor<Val> {
     auto result = Tensor<Val>{};
     result.offset_ = offset_ + index * strides_[dim];
-    // Sizes.
-    result.sizes_.reserve(sizes_.size() - 1);
-    std::copy(sizes_.begin(), sizes_.begin() + dim, std::back_inserter(result.sizes_));
-    std::copy(sizes_.begin() + dim + 1, sizes_.end(), std::back_inserter(result.sizes_));
-    // Strides.
-    result.strides_.reserve(strides_.size() - 1);
-    std::copy(strides_.begin(), strides_.begin() + dim, std::back_inserter(result.strides_));
-    std::copy(strides_.begin() + dim + 1, strides_.end(), std::back_inserter(result.strides_));
+    result.sizes_ = copy_except(sizes_, dim);
+    result.strides_ = copy_except(strides_, dim);
     result.vals_ = vals_;
     return result;
   }
@@ -101,21 +119,14 @@ private:
 };
 
 template<typename Val>
-auto mean(const Tensor<Val>& a, Index axis) -> Tensor<Val> {
-  return {};
+auto operator<<(std::ostream& out, const std::vector<Val>& a) -> std::ostream& {
+  return write_items(out, a, ' ');
 }
 
-auto operator<<(
-  std::ostream& out, const std::ranges::range auto& a
-) -> std::ostream& {
-  for (const auto& x: a | std::ranges::views::take(1)) {
-    out << x;
-  }
-  for (const auto& x: a | std::ranges::views::drop(1)) {
-    out << ' ' << x;
-  }
-  return out;
-}
+// template<typename Val>
+// auto mean(const Tensor<Val>& a, Index axis) -> Tensor<Val> {
+//   return {};
+// }
 
 auto main() -> int {
   auto a = Tensor<double>::zeros({2, 3});

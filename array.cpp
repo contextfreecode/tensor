@@ -23,16 +23,21 @@ template<typename Val, size_t N, size_t M>
 using Mat = Vec<Vec<Val, M>, N>;
 // using Mat = Val[N][M];
 
-auto operator<<(
-  std::ostream& out, const std::ranges::range auto& a
+auto write_items(
+  std::ostream& out, const std::ranges::range auto& a, auto sep
 ) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
   for (const auto& x: a | std::ranges::views::drop(1)) {
-    out << ' ' << x;
+    out << sep << x;
   }
   return out;
+}
+
+template<typename Val, size_t N>
+auto operator<<(std::ostream& out, const Vec<Val, N>& a) -> std::ostream& {
+  return write_items(out, a, ' ');
 }
 
 template<typename Val, size_t N>

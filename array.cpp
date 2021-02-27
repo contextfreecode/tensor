@@ -23,13 +23,14 @@ template<typename Val, size_t N, size_t M>
 using Mat = Vec<Vec<Val, M>, N>;
 // using Mat = Val[N][M];
 
-template<typename Val, size_t N>
-auto operator<<(std::ostream& out, const Vec<Val, N>& a) -> std::ostream& {
+auto operator<<(
+  std::ostream& out, const std::ranges::range auto& a
+) -> std::ostream& {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
   for (const auto& x: a | std::ranges::views::drop(1)) {
-    out << " " << x;
+    out << ' ' << x;
   }
   return out;
 }
@@ -77,6 +78,7 @@ auto main() -> int {
   // std::cout << std::rank<decltype(a)>::value << std::endl;
   // std::cout << std::extent<decltype(a)>::value << std::endl;
   // std::cout << std::extent<decltype(a), 1>::value << std::endl;
+  // TODO Something else using type traits instead of type args???
   auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
   std::cout << sizeof(a) << std::endl;
   std::cout << sum_col(a) << std::endl;

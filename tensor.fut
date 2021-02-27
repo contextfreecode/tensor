@@ -10,6 +10,10 @@ let mean_col [n][m] (array: [n][m]f64): [n]f64 =
 let mean_row [n][m] (array: [n][m]f64): [m]f64 =
   mean_col (transpose array)
 
+-- let mean_row [n][m] (array: [n][m]f64): [m]f64 =
+--   let sum = reduce (map2 (+)) (replicate m 0) array
+--   in map (/ (f64.i64 n)) sum
+
 -- > mean_col scores
 
 -- > mean_row scores

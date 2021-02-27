@@ -16,61 +16,71 @@ struct Tensor {
   }
 
   Tensor(std::initializer_list<Val> row) {
-    sizes = {row.size()};
+    sizes_ = {row.size()};
     init();
-    *vals = row;
+    *vals_ = row;
   }
 
   Tensor(std::initializer_list<std::initializer_list<Val>> rows) {
-    sizes = {Index(rows.size()), rows.size() ? Index(rows.begin()->size()) : 0};
+    sizes_ = {
+      Index(rows.size()), rows.size() ? Index(rows.begin()->size()) : 0,
+    };
     init();
     for (auto& row: rows) {
-      auto begin = vals->begin() + sizes[1] * (&row - rows.begin());
+      auto begin = vals_->begin() + sizes_[1] * (&row - rows.begin());
       std::copy(row.begin(), row.end(), begin);
     }
   }
 
   static auto zeros(const std::vector<Index>& shape) -> Tensor<Val> {
     auto result = Tensor<Val>{};
-    result.sizes = shape;
+    result.sizes_ = shape;
     result.init();
     return result;
   }
 
-  auto rank() const {return sizes.size();};
+  auto offset() const -> Index {return offset_;}
 
   auto operator[](std::initializer_list<Index> coord) const -> Val {
     std::cout << "index: " << index(coord) << std::endl;
-    return vals->at(index(coord));
+    return vals_->at(index(coord));
   }
 
   auto operator()(std::convertible_to<Index> auto... coord) const -> Val {
     return (*this)[{Index(coord)...}];
   }
 
+  auto rank() const {return sizes_.size();}
+
+  auto sizes() const -> const std::vector<Index> {return sizes_;}
+
+  auto strides() const -> const std::vector<Index> {return strides_;}
+
+  auto vals() const -> const std::vector<Val>& {return *vals_;}
+
 private:
-  Index offset = 0;
-  std::vector<Index> sizes;
-  std::vector<Index> strides;
-  std::shared_ptr<std::vector<Val>> vals;
+  Index offset_ = 0;
+  std::vector<Index> sizes_;
+  std::vector<Index> strides_;
+  std::shared_ptr<std::vector<Val>> vals_;
 
   auto index(std::initializer_list<Index> coord) const -> Index {
     return std::transform_reduce(
-      coord.begin(), coord.end(), strides.cbegin(), offset
+      coord.begin(), coord.end(), strides_.cbegin(), offset_
     );
   }
 
   auto init() -> void {
-    strides.resize(sizes.size());
+    strides_.resize(sizes_.size());
     // Calculate strides in row majorish order back to front.
     // Imperative seems easier here at the moment and good enough.
     auto stride = 1;
-    for (auto i = sizes.size(); i; i -= 1) {
-      strides[i - 1] = stride;
-      stride *= sizes[i - 1];
+    for (auto i = sizes_.size(); i; i -= 1) {
+      strides_[i - 1] = stride;
+      stride *= sizes_[i - 1];
     }
     // Final "stride" is for the whole array size.
-    vals = std::make_shared<std::vector<Val>>(stride);
+    vals_ = std::make_shared<std::vector<Val>>(stride);
   }
 };
 

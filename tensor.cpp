@@ -21,23 +21,21 @@ auto copy_except(
 
 auto write_items(
   std::ostream& out, const std::ranges::range auto& a, auto sep
-) -> std::ostream& {
+) -> void {
   for (const auto& x: a | std::ranges::views::take(1)) {
     out << x;
   }
   for (const auto& x: a | std::ranges::views::drop(1)) {
     out << sep << x;
   }
-  return out;
 }
 
 using Index = std::ptrdiff_t;
 
-// Dense only, not sparse.
 template<typename Val>
 struct Tensor {
   Tensor() {
-    //
+    // TODO Efficient scalar with value 0?
   }
 
   Tensor(std::initializer_list<Val> row) {
@@ -118,9 +116,17 @@ private:
   }
 };
 
+template<typename Item>
+auto operator<<(std::ostream& out, const std::vector<Item>& items) -> auto& {
+  write_items(out, items, ' ');
+  return out;
+}
+
 template<typename Val>
-auto operator<<(std::ostream& out, const std::vector<Val>& a) -> std::ostream& {
-  return write_items(out, a, ' ');
+auto describe(std::ostream& out, const Tensor<Val>& tensor) {
+  std::cout << "offset " << tensor.offset() << std::endl;
+  std::cout << "sizes " << tensor.sizes() << std::endl;
+  std::cout << "strides " << tensor.strides() << std::endl;
 }
 
 // template<typename Val>
@@ -129,21 +135,27 @@ auto operator<<(std::ostream& out, const std::vector<Val>& a) -> std::ostream& {
 // }
 
 auto main() -> int {
-  auto a = Tensor<double>::zeros({2, 3});
-  std::cout << a[{0, 0}] << std::endl;
-  std::cout << a[{1, 0}] << std::endl;
-  std::cout << a[{1, 2}] << std::endl;
-  // auto b = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
-  auto b = Tensor{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
-  std::cout << b[{0, 0}] << std::endl;
-  std::cout << b[{1, 0}] << std::endl;
-  std::cout << b[{1, 2}] << std::endl;
-  std::cout << b(1, 2) << std::endl;
-  // auto m = mean(b, 0);
-  std::cout << b.sizes() << std::endl;
-  std::cout << b.strides() << std::endl;
-  auto row0 = b.at_by_dim(1, 0);
-  std::cout << row0.offset() << std::endl;
-  std::cout << row0.sizes() << std::endl;
-  std::cout << row0.strides() << std::endl;
+  std::cout << "tensor" << std::endl;
+  // auto a = Tensor<double>::zeros({2, 3});
+  // auto a = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
+  auto a = Tensor{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+  describe(std::cout, a);
+  std::cout
+    << a[{0, 0}] << ' ' << a[{0, 1}] << ' ' << a[{0, 2}] << std::endl
+    << a[{1, 0}] << ' ' << a[{1, 1}] << ' ' << a[{1, 2}] << std::endl;
+  // std::cout
+  //   << a(0, 0) << ' ' << a(0, 1) << ' ' << a(0, 2) << std::endl
+  //   << a(1, 0) << ' ' << a(1, 1) << ' ' << a(1, 2) << std::endl;
+  // Row.
+  // std::cout << "row" << std::endl;
+  // auto row = a.at_by_dim(1, 0);
+  // describe(std::cout, row);
+  // std::cout << row(0) << " " << row(1) << " " << row(2) << std::endl;
+  // Cols.
+  // std::cout << "cols" << std::endl;
+  // for (auto j = 0; j < a.sizes().at(1); j += 1) {
+  //   auto col = a.at_by_dim(j, 1);
+  //   // describe(std::cout, col);
+  //   std::cout << col(0) << " " << col(1) << std::endl;
+  // }
 }

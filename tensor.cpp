@@ -135,7 +135,6 @@ auto describe(std::ostream& out, const Tensor<Val>& tensor) {
 // }
 
 auto main() -> int {
-  std::cout << "tensor" << std::endl;
   // auto a = Tensor<double>::zeros({2, 3});
   // auto a = Tensor<double>{{1, 2, 3}, {4, 5, 6}};
   auto a = Tensor{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};

@@ -71,21 +71,30 @@ auto sum_row(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
   );
 }
 
-// template<typename Val, size_t N, size_t M>
-// auto sum(const Mat<Val, N, M>& matrix) -> Vec<Val, M> {
-
 auto main() -> int {
   // Remember valgrind and overhead. (1 alloc even without the next line.)
   // std::cout << "Hi!" << std::endl;
-  // See also: nm -an array | c++filt | grep across
+  // See also: nm -an array | c++filt | grep sum_
   // auto x = Scalar<double>{1};
-  // double a[][3] = {{1, 2, 3}, {4, 5, 6}};
-  // std::cout << std::rank<decltype(a)>::value << std::endl;
-  // std::cout << std::extent<decltype(a)>::value << std::endl;
-  // std::cout << std::extent<decltype(a), 1>::value << std::endl;
-  // TODO Something else using type traits instead of type args???
-  auto a = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
-  std::cout << sizeof(a) << std::endl;
-  std::cout << sum_col(a) << std::endl;
-  std::cout << sum_row(a) << std::endl;
+
+  using Val = double;
+  Val a[][3] = {{1, 2, 3}, {4, 5, 6}};
+  printf("%td\n", sizeof a);
+  printf("%td\n", sizeof a[0]);
+
+  // Val* b[] = {(Val[]){1, 2, 3}, (Val[]){4, 5, 6}};
+  // printf("%td\n", sizeof b);
+  // printf("%td\n", sizeof b[0]);
+
+  // Val b0[] = {1, 2, 3}, b1[] = {4, 5, 6};
+  // Val* b[] = {b0, b1};
+
+  // std::cout << "ndim " << std::rank<decltype(a)>::value << std::endl;
+  // std::cout << "nrow " << std::extent<decltype(a)>::value << std::endl;
+  // std::cout << "ncol " << std::extent<decltype(a), 1>::value << std::endl;
+
+  // auto mat = Mat<double, 2, 3>{{{1, 2, 3}, {4, 5, 6}}};
+  // std::cout << sizeof(mat) << std::endl;
+  // std::cout << sum_row(mat) << std::endl;
+  // std::cout << sum_col(mat) << std::endl;
 }

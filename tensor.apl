@@ -4,9 +4,9 @@ scores ← 2 3 ⍴ 95 83 76 99 89 82
 ≡ scores
 ≡ (95 83 76) (99 89 82)
 
-rowMean ← {+⌿⍵÷≢⍵}
+rowMean ← {(+⌿⍵)÷≢⍵}
 colMean ← {rowMean ⍉⍵}
-axisMean ← {+/[⍺]⍵÷⍺⌷⍴⍵}
+axisMean ← {(+/[⍺]⍵)÷⍺⌷⍴⍵}
 
 rowMean scores
 colMean scores
